@@ -1,6 +1,6 @@
 {
   "name": "travis-pipeline",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A simple build pipeline system for GitHub and Travis CI integration",
   "author": "Sirisak Lueangsaksri <spywhere@digitalparticle.com>",
   "repository": "spywhere/travis-pipeline",

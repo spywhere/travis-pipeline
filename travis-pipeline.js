@@ -102,6 +102,9 @@ function triggerPipeline(pipeline, filename, status, logger){
         ) {
             parseUrl.host += "/";
         }
+        if (!parseUrl.auth) {
+            parseUrl.auth = process.env["GH_TOKEN"];
+        }
         execSync(
             `git clone ${parseUrl.format()}` +
             ((
