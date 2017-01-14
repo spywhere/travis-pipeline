@@ -1,0 +1,26 @@
+{
+  "name": "travis-pipeline",
+  "version": "0.1.0",
+  "description": "A simple build pipeline system for GitHub and Travis CI integration",
+  "author": "Sirisak Lueangsaksri <spywhere@digitalparticle.com>",
+  "repository": "spywhere/travis-pipeline",
+  "bugs": {
+    "url": "https://github.com/spywhere/travis-pipeline/issues"
+  },
+  "main": "index.js",
+  "bin": {
+    "travis-pipeline": "bin/travis-pipeline"
+  },
+  "scripts": {
+    "app": "bin/travis-pipeline"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.4.7",
+    "commander": "^2.9.0",
+    "js-yaml-promise": "^1.0.0",
+    "mkdirp": "^0.5.1",
+    "mkdirp-promise": "^5.0.0",
+    "parse-github-url": "^1.0.0"
+  }
+}

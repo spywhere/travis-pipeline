@@ -1,0 +1,59 @@
+conditions:
+# Trigger when "repo/a" and "repo/b" last triggered time is less than 1 hour
+- time:
+    diff: <1h
+    repos:
+    - repo/a
+    - repo/b
+on_trigger:
+# Trigger "repo/x" when conditions are met
+- repo/x
+
+#################
+
+user:
+  email: noreply@travis-ci.org
+  name: Travis Pipeline
+
+push:
+  default: simple
+
+condition:
+  integration:
+  # Time based
+  - time:
+    # Time differences
+    diff: <1h
+    # Exact date time
+    exact: 27 Dec 16 8:45pm
+    exact: 27 Dec 16 20:45
+    exact: Dec 27, 16 20:45
+    exact: Dec 27 16 8:45pm
+    # Reference names
+    ref:
+    - repo/a
+    - repo/b
+
+# Current step reference name
+name: Step 1
+
+# All condition (varient 1)
+trigger: repo/a
+
+# All condition (varient 2)
+trigger:
+- repo/a
+- repo/b
+
+# Specific condition (varient 3)
+trigger:
+  # All condition
+  always:
+  - repo/a
+  - manual repo/b
+  # When no condition matched
+  default:
+  - repo/a
+  # On "integration" condition
+  integration:
+  - https://github.com/user/repo

@@ -1,0 +1,21 @@
+user:
+  email: noreply@travis-ci.org
+  name: Travis Pipeline
+
+push:
+  default: simple
+
+condition:
+  integration:
+
+trigger:
+  # All condition
+  always:
+  - spywhere/travis-pipeline-2a
+  # When no condition matched
+  default:
+  - spywhere/travis-pipeline-2b
+  - https://github.com/user/repo
+  # On "integration" condition
+  integration:
+  - https://github.com/user/repo

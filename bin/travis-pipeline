@@ -1,0 +1,62 @@
+#!/usr/bin/env node
+let travisPipeline = require("../travis-pipeline");
+let commander = require("commander");
+let bluebird = require("bluebird");
+let yaml = require("js-yaml-promise");
+let fs = bluebird.promisifyAll(require("fs"));
+let filename = ".pipeline.yml";
+let status_filename = ".pipeline.status.yml";
+let logger = console.log;
+
+function triggerWithStatus(success){
+    fs.accessAsync(filename, fs.constants.R_OK).then(fd => {
+        return fs.readFileAsync(
+            filename
+        );
+    }).then(data => {
+        return yaml.safeLoad(
+            data.toString(),
+            {
+                json: true
+            }
+        );
+    }).then(jsonData => {
+        travisPipeline.setupConfig(jsonData["git"], logger);
+        let conditions = travisPipeline.checkConditions(
+            jsonData["condition"], logger
+        );
+        return travisPipeline
+            .pipeline(status_filename, logger)
+            .withConditions(conditions)
+            .withStatus(success)
+            .trigger(jsonData["trigger"]);
+    }).catch(error => {
+        console.error(error);
+        process.exit(4);
+    });
+}
+
+commander
+    .command("precaution")
+    .description(
+        "prevent the pipeline from running if the conditions are not met yet"
+    )
+    .action(() => {
+        console.log("Return status code 1 if the condition is not met");
+    });
+commander
+    .command("success")
+    .description("trigger the pipeline with success status")
+    .action(() => {
+        triggerWithStatus(true);
+    });
+commander
+    .command("fail")
+    .description("trigger the pipeline with fail status")
+    .action(() => {
+        triggerWithStatus(false);
+    });
+
+if (commander.parse(process.argv).args.length <= 0) {
+    commander.help();
+}
