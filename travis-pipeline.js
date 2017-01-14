@@ -1,4 +1,8 @@
+let isTravis = require("is-travis");
 let execSync = require("child_process").execSync;
+if (!isTravis) {
+    execSync = console.log;
+}
 let githubUrl = require("parse-github-url");
 let bluebird = require("bluebird");
 let yaml = require("js-yaml-promise");
@@ -86,6 +90,49 @@ function updateWithStatus(parseUrl, filename, status){
     });
 }
 
+function manualFormat(url){
+    let output = "";
+    if (url.protocol) {
+        output += url.protocol;
+        if (!url.protocol.endsWith(":")) {
+            output += ":";
+        }
+        if (
+            [
+            "http", "https", "ftp", "gopher", "file"
+            ].some(value => {
+                return value === url.protocol;
+            })
+        ) {
+            url.slashes = true;
+        }
+    }
+    if (url.slashes) {
+        output += "//";
+    }
+    if (url.auth && (url.host || url.hostname)) {
+        output += url.auth + "@";
+    }
+    if (url.host) {
+        output += url.host;
+    } else {
+        if (url.hostname) {
+            output += url.hostname;
+            if (url.port) {
+                output += ":" + url.port;
+            }
+        }
+    }
+    if (url.pathname) {
+        if (!url.pathname.startsWith("/")) {
+            output += "/";
+        }
+        output += url.pathname;
+    }
+
+    return output;
+}
+
 function triggerPipeline(pipeline, filename, status, logger){
     if (
         !pipeline ||
@@ -96,17 +143,17 @@ function triggerPipeline(pipeline, filename, status, logger){
     }
     for (let url of pipeline) {
         let parseUrl = githubUrl(url);
-        if (
-            !parseUrl.protocol && !parseUrl.slashes &&
-            parseUrl.host && parseUrl.path
-        ) {
-            parseUrl.host += "/";
+        if (!parseUrl.protocol) {
+            parseUrl.protocol = "https";
         }
         if (!parseUrl.auth) {
             parseUrl.auth = process.env["GH_TOKEN"];
         }
+        if (!parseUrl.pathname.endsWith(".git")) {
+            parseUrl.pathname += ".git";
+        }
         execSync(
-            `git clone ${parseUrl.format()}` +
+            `git clone ${manualFormat(parseUrl)}` +
             ((
                 parseUrl.branch && parseUrl.branch !== "master"
             ) ? ` -b ${parseUrl.branch}` : "") +

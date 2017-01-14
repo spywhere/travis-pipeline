@@ -1,9 +1,10 @@
-user:
-  email: noreply@travis-ci.org
-  name: Travis Pipeline
+git:
+  user:
+    email: noreply@travis-ci.org
+    name: Travis Pipeline
 
-push:
-  default: simple
+  push:
+    default: simple
 
 condition:
   integration:

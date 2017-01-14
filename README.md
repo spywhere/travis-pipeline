@@ -2,6 +2,8 @@
 
 A simple build pipeline system for GitHub and Travis CI integration
 
+Development Status: Alpha (**NOT** recommended for production use)
+
 ## Setup
 
 1. Install the package using
